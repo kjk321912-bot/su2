@@ -3,37 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>전자회로 2학년: 다이오드와 트랜지스터 정복하기</title>
+    <title>전자회로: 다이오드와 트랜지스터 (태블릿용)</title>
     <style>
-        /* 기본 스타일 설정 */
+        /* --- 기본 변수 및 리셋 --- */
         :root {
-            --primary-color: #3b82f6;
-            --secondary-color: #10b981;
-            --accent-color: #f59e0b;
+            --primary-color: #2563eb; /* 더 선명한 블루 */
+            --secondary-color: #059669;
+            --accent-color: #d97706;
             --text-color: #1f2937;
-            --bg-color: #ffffff;
-            --light-gray: #f3f4f6;
+            --bg-color: #f8fafc; /* 아주 연한 회색 배경 */
+            --card-bg: #ffffff;
+            --light-gray: #e2e8f0;
         }
 
         body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.6;
+            line-height: 1.7;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden; /* 스크롤 방지 (슬라이드 내부만 스크롤) */
         }
 
-        /* 상단 진행바 */
+        /* --- 상단 진행바 --- */
         #progress-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 6px;
+            height: 8px;
             background-color: var(--light-gray);
             z-index: 1000;
         }
@@ -43,72 +45,151 @@
             background-color: var(--primary-color);
             width: 0%;
             transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
         }
 
-        /* 메인 컨텐츠 영역 */
+        /* --- 메인 컨텐츠 영역 (태블릿 최적화) --- */
         main {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
+            padding: 40px;
             width: 100%;
+            max-width: 1200px; /* 태블릿 가로폭에 맞게 확장 */
+            margin: 0 auto;
             box-sizing: border-box;
+            height: 100%;
         }
 
-        /* 슬라이드 카드 스타일 */
+        /* --- 슬라이드 카드 스타일 --- */
         .slide {
             display: none;
+            width: 100%;
+            height: 90%; /* 화면 높이의 대부분 사용 */
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            box-sizing: border-box;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto; /* 내용이 넘치면 스크롤 */
+            
+            /* 기본: Flex Column */
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             text-align: center;
-            width: 100%;
-            animation: fadeIn 0.5s ease-in-out;
         }
 
         .slide.active {
             display: flex;
         }
 
+        /* --- 태블릿 가로모드용 2분할 레이아웃 (Split View) --- */
+        @media (min-width: 768px) {
+            .slide.split-view {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                text-align: left;
+                gap: 60px;
+            }
+
+            .slide.split-view .content-left {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                height: 100%;
+            }
+
+            .slide.split-view .content-right {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: #f1f5f9;
+                border-radius: 15px;
+                padding: 30px;
+                height: 100%;
+                max-height: 500px; /* 시각자료 영역 높이 제한 */
+            }
+            
+            /* 왼쪽 텍스트 정렬 */
+            .slide.split-view h2 { margin-top: 0; }
+            .slide.split-view p { max-width: 100%; }
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        h1 { font-size: 2.2rem; margin-bottom: 1rem; color: #111827; }
-        h2 { font-size: 1.8rem; color: var(--primary-color); margin-bottom: 1.5rem; }
-        p { font-size: 1.1rem; margin-bottom: 1.5rem; color: #4b5563; max-width: 600px; word-break: keep-all; }
+        /* --- 타이포그래피 --- */
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #1e293b; letter-spacing: -0.05rem; }
+        h2 { font-size: 2rem; color: var(--primary-color); margin-bottom: 1.5rem; letter-spacing: -0.025rem; }
+        p { font-size: 1.25rem; margin-bottom: 1.5rem; color: #475569; word-break: keep-all; }
         
-        .highlight { font-weight: bold; color: var(--primary-color); background: #e0f2fe; padding: 0 5px; border-radius: 4px; }
-        .box { background: var(--light-gray); padding: 20px; border-radius: 15px; margin: 20px 0; width: 100%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .diagram { font-size: 3rem; margin: 20px 0; }
+        .highlight { font-weight: bold; color: var(--primary-color); background: #dbeafe; padding: 2px 8px; border-radius: 6px; }
+        
+        /* 박스 스타일 */
+        .box { 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0;
+            padding: 25px; 
+            border-radius: 12px; 
+            margin: 20px 0; 
+            width: 100%; 
+            box-sizing: border-box;
+        }
 
-        /* 버튼 스타일 */
+        /* --- 버튼 스타일 (터치 최적화) --- */
         .btn {
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-size: 1rem;
+            padding: 16px 32px; /* 터치 영역 확대 */
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            margin: 5px;
-            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
         .btn:active { transform: translateY(0); }
-        .btn-secondary { background-color: #9ca3af; }
+        .btn-secondary { background-color: #64748b; }
+        .btn-experiment { background-color: var(--accent-color); }
         
-        /* 퀴즈 스타일 */
-        .quiz-options { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 400px; }
-        .quiz-btn { background-color: white; border: 2px solid var(--primary-color); color: var(--primary-color); }
-        .quiz-btn:hover { background-color: #eff6ff; }
-        .correct { background-color: var(--secondary-color) !important; color: white !important; border-color: var(--secondary-color) !important; }
-        .wrong { background-color: #ef4444 !important; color: white !important; border-color: #ef4444 !important; animation: shake 0.5s; }
+        /* 퀴즈 버튼 그리드 */
+        .quiz-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2열 배치 */
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .quiz-btn { 
+            background-color: white; 
+            border: 2px solid #e2e8f0; 
+            color: var(--text-color); 
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+        .quiz-btn:hover { border-color: var(--primary-color); background-color: #eff6ff; }
+        
+        .correct { background-color: #d1fae5 !important; border-color: var(--secondary-color) !important; color: #065f46 !important; font-weight: bold; }
+        .wrong { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; animation: shake 0.4s; }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -116,46 +197,66 @@
             75% { transform: translateX(5px); }
         }
 
-        /* 하단 네비게이션 */
+        /* --- 하단 네비게이션 --- */
         footer {
+            height: 80px;
             display: flex;
             justify-content: space-between;
-            padding: 20px;
+            align-items: center;
+            padding: 0 40px;
             background-color: white;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid #e2e8f0;
+            flex-shrink: 0;
         }
 
-        /* 반응형 */
-        @media (max-width: 600px) {
-            h1 { font-size: 1.5rem; }
-            h2 { font-size: 1.3rem; }
-            p { font-size: 1rem; }
+        /* --- 시각 자료 및 시뮬레이션 --- */
+        .diagram-container {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .sim-container {
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bulb {
+            width: 80px; /* 더 크게 */
+            height: 80px;
+            background-color: #cbd5e1;
+            border-radius: 50%;
+            border: 4px solid #94a3b8;
+            margin: 20px auto;
+            transition: all 0.3s;
+        }
+        .bulb.on {
+            background-color: #facc15;
+            border-color: #eab308;
+            box-shadow: 0 0 40px #facc15;
+        }
+
+        /* 트랜지스터 슬라이더 */
+        input[type=range] {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #cbd5e1;
+            outline: none;
+            margin: 20px 0;
         }
 
         .teacher-badge {
             background-color: #ffedd5;
             color: #c2410c;
-            padding: 5px 15px;
-            border-radius: 20px;
+            padding: 8px 16px;
+            border-radius: 30px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 1rem;
             margin-bottom: 20px;
             display: inline-block;
-        }
-
-        /* 이미지/다이어그램 대체 CSS */
-        .circuit-symbol {
-            width: 100%;
-            max-width: 300px;
-            height: 150px;
-            background: white;
-            border: 2px dashed #cbd5e1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            margin: 20px 0;
-            position: relative;
         }
     </style>
 </head>
@@ -166,310 +267,271 @@
     </div>
 
     <main id="content">
-        <!-- Slide 1: Cover -->
+        <!-- 1. 커버 페이지 (Center) -->
         <div class="slide active">
             <span class="teacher-badge">👩‍🏫 김진경 선생님과 함께하는</span>
             <h1>기초 전자 소자 정복하기</h1>
-            <div class="diagram">⚡️🔋🚗</div>
-            <p>전기전자제어과 2학년 여러분, 환영합니다!</p>
-            <p>오늘은 전자회로의 핵심인 <strong>다이오드</strong>와 <strong>트랜지스터</strong>를<br>완벽하게 이해하는 시간입니다.</p>
+            <div class="diagram-container">⚡️🔋🚗</div>
+            <p style="font-size: 1.5rem;">전기전자제어과 2학년</p>
+            <p><strong>다이오드</strong>와 <strong>트랜지스터</strong>를 완벽하게 이해하고<br>직접 시뮬레이션 해보는 시간입니다.</p>
             <button class="btn" onclick="nextSlide()">수업 시작하기 🚀</button>
         </div>
 
-        <!-- Slide 2: Intro Hook -->
-        <div class="slide">
-            <h2>🚗 생각 열기: 전기 자동차</h2>
-            <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Electric Car" style="width:100%; max-width:400px; border-radius:10px; margin-bottom:20px;">
-            <p>요즘 도로에서 전기 자동차(EV)를 자주 보죠?</p>
-            <div class="box">
-                <p><strong>🤔 잠깐! 생각해봅시다.</strong></p>
-                <p>전기 자동차 안에는 수많은 반도체들이 들어있어요.<br>이 반도체들은 배터리의 전기를 조절하고 모터를 돌리죠.</p>
-                <p>과연 어떤 부품들이 이 엄청난 일을 해내는 걸까요?</p>
+        <!-- 2. 도입 (Split View) -->
+        <div class="slide split-view">
+            <div class="content-left">
+                <h2>🚗 생각 열기: 전기 자동차</h2>
+                <p>전기 자동차 안에는 수많은 반도체들이 들어있습니다.</p>
+                <div class="box">
+                    <p><strong>🤔 생각해봅시다.</strong></p>
+                    <p>배터리의 직류 전기를 모터가 쓸 수 있게 바꾸거나,<br>전기의 흐름을 수도꼭지처럼 조절하는 부품은 무엇일까요?</p>
+                </div>
+                <button class="btn" onclick="nextSlide()">정답 알아보기 👉</button>
             </div>
-            <button class="btn" onclick="nextSlide()">정답 알아보기 👉</button>
+            <div class="content-right">
+                <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Electric Car" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">
+            </div>
         </div>
 
-        <!-- Slide 3: Video -->
+        <!-- 3. 영상 (Center - Wide) -->
         <div class="slide">
-            <h2>📹 영상으로 먼저 만나보기</h2>
-            <p>반도체의 세계를 3분 만에 훑어볼까요?</p>
-            <div style="width:100%; max-width:560px; margin: 20px 0;">
-                <iframe width="100%" height="315" src="https://www.youtube.com/embed/sN_1Qd5_aMc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:15px;"></iframe>
+            <h2>📹 영상으로 먼저 감 잡기</h2>
+            <div style="width:100%; max-width:900px; aspect-ratio: 16/9; margin: 20px 0;">
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/sN_1Qd5_aMc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:20px;"></iframe>
             </div>
-            <p>영상을 다 보셨다면 다음으로 넘어가서 상세하게 배워봐요!</p>
+            <p class="teacher-badge" style="background: #f1f5f9; color: #64748b;">출처: 유튜브 '안될과학' - 반도체</p>
             <button class="btn" onclick="nextSlide()">학습 시작! 📝</button>
         </div>
 
-        <!-- Slide 4: Diode Definition -->
-        <div class="slide">
-            <h2>01. 다이오드(Diode)란?</h2>
-            <p>다이오드는 <strong>전류를 한쪽 방향으로만</strong> 흐르게 하는 '2단자 소자'입니다.</p>
-            <div class="circuit-symbol">
-                <span style="font-size:2rem;">➡️ㅣ</span>
-                <span style="position:absolute; left: 20px;">P형 (애노드 +)</span>
-                <span style="position:absolute; right: 20px;">N형 (캐소드 -)</span>
+        <!-- 4. 다이오드 개념 (Split View) -->
+        <div class="slide split-view">
+            <div class="content-left">
+                <h2>01. 다이오드(Diode)란?</h2>
+                <p>다이오드는 <span class="highlight">전류를 한쪽 방향으로만</span> 흐르게 하는 '2단자 소자'입니다.</p>
+                <ul style="font-size: 1.2rem; line-height: 2;">
+                    <li><strong>일방통행 도로</strong>와 같습니다.</li>
+                    <li>교류(AC)를 직류(DC)로 바꿀 때 필수적입니다.</li>
+                </ul>
+                <button class="btn" onclick="nextSlide()">구조 살펴보기 👉</button>
             </div>
-            <p>마치 <strong>'일방통행 도로'</strong>나 <strong>'체크 밸브'</strong>와 같죠!</p>
-            <p>💡 <strong>기호 읽기:</strong> 화살표 방향이 전류가 흐르는 방향입니다.</p>
-            <button class="btn" onclick="nextSlide()">다음 👉</button>
+            <div class="content-right">
+                <div style="font-size: 6rem;">➡️ㅣ</div>
+                <div style="text-align:center; font-weight:bold; margin-top:20px;">
+                    <span style="color:#ef4444; margin-right:20px;">애노드 (P형, +)</span>
+                    <span style="color:#3b82f6;">캐소드 (N형, -)</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Slide 5: Diode Structure -->
-        <div class="slide">
-            <h2>다이오드의 구조</h2>
-            <p>다이오드는 <strong>P형 반도체</strong>와 <strong>N형 반도체</strong>를 접합하여 만듭니다. (PN 접합)</p>
-            <div class="box" style="display:flex; justify-content:center; align-items:center; gap:0;">
-                <div style="background:#ef4444; color:white; padding:20px; width:100px;">P 영역<br>(정공)</div>
-                <div style="background:#3b82f6; color:white; padding:20px; width:100px;">N 영역<br>(전자)</div>
+        <!-- 5. 다이오드 구조 (Split View) -->
+        <div class="slide split-view">
+            <div class="content-left">
+                <h2>다이오드의 구조 (PN 접합)</h2>
+                <p>서로 다른 성질을 가진 두 반도체를 붙여서 만듭니다.</p>
+                <div class="box">
+                    <p>🔴 <strong>P형 (Positive):</strong> 정공(+)이 많은 반도체</p>
+                    <p>🔵 <strong>N형 (Negative):</strong> 전자(-)가 많은 반도체</p>
+                </div>
+                <button class="btn btn-experiment" onclick="nextSlide()">🧪 시뮬레이션 하러 가기!</button>
             </div>
-            <ul style="text-align:left; display:inline-block;">
-                <li>🔴 <strong>애노드(Anode, A):</strong> P형 영역 (양극)</li>
-                <li>🔵 <strong>캐소드(Cathode, K):</strong> N형 영역 (음극)</li>
-            </ul>
-            <button class="btn" onclick="nextSlide()">이해했어요! 👌</button>
+            <div class="content-right">
+                <div style="display:flex; width:100%; height:200px; border-radius:15px; overflow:hidden; font-size:2rem; font-weight:bold; color:white;">
+                    <div style="flex:1; background:#ef4444; display:flex; align-items:center; justify-content:center;">P</div>
+                    <div style="width:10px; background:#ccc;"></div> <!-- 접합부 -->
+                    <div style="flex:1; background:#3b82f6; display:flex; align-items:center; justify-content:center;">N</div>
+                </div>
+                <p style="margin-top:15px; color:#64748b;">PN 접합 구조</p>
+            </div>
         </div>
 
-        <!-- Slide 6: Forward Bias -->
-        <div class="slide">
-            <h2>순방향 바이어스 (Forward Bias)</h2>
-            <div class="diagram">🛣️ 🚗💨 🆗</div>
-            <p><strong>P형(+)에 플러스, N형(-)에 마이너스</strong> 전압을 걸면?</p>
-            <div class="box">
-                <p>🚧 전위 장벽이 낮아짐</p>
-                <p>⬇️ 저항이 매우 작아짐</p>
-                <p>⚡ <strong>전류가 콸콸 잘 흐름!</strong> (스위치 ON)</p>
+        <!-- 6. 다이오드 시뮬레이션 (Split View - Interactive) -->
+        <div class="slide split-view">
+            <div class="content-left">
+                <h2>🧪 체험: 다이오드 동작 실험</h2>
+                <p>전지를 연결하는 방향(극성)이 매우 중요합니다.</p>
+                <div class="box">
+                    <strong>실험 미션:</strong><br>
+                    순방향 버튼과 역방향 버튼을 눌러보며<br>
+                    전구의 변화를 관찰하세요.
+                </div>
+                <p id="sim-diode-msg" style="font-size:1.3rem; font-weight:bold; color:var(--primary-color);">버튼을 눌러 연결해보세요.</p>
             </div>
-            <p>실리콘 다이오드는 약 0.7V 이상의 전압이 필요해요.</p>
-            <button class="btn" onclick="nextSlide()">반대는요? 🤔</button>
+            <div class="content-right" style="background:#fff; border: 2px solid #e2e8f0;">
+                <div id="sim-bulb" class="bulb"></div>
+                <div style="font-size:3rem; margin: 20px;">➡️ㅣ</div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; width:100%;">
+                    <button class="btn" onclick="setDiodeBias('forward')">순방향 (Forward)</button>
+                    <button class="btn btn-secondary" onclick="setDiodeBias('reverse')">역방향 (Reverse)</button>
+                </div>
+            </div>
         </div>
 
-        <!-- Slide 7: Reverse Bias -->
-        <div class="slide">
-            <h2>역방향 바이어스 (Reverse Bias)</h2>
-            <div class="diagram">⛔ 🚗 ❌</div>
-            <p>반대로 <strong>P형에 마이너스, N형에 플러스</strong>를 걸면?</p>
-            <div class="box">
-                <p>🚧 전위 장벽이 매우 높아짐</p>
-                <p>⬆️ 저항이 엄청 커짐</p>
-                <p>🚫 <strong>전류가 흐르지 않음!</strong> (스위치 OFF)</p>
-            </div>
-            <p>이 성질 때문에 다이오드는 <strong>정류 작용</strong>을 할 수 있어요.</p>
-            <button class="btn" onclick="nextSlide()">정류 작용이 뭐죠? 🧐</button>
-        </div>
-
-        <!-- Slide 8: Rectification -->
+        <!-- 7. 정류 작용 설명 (Center) -->
         <div class="slide">
             <h2>다이오드의 핵심: 정류(Rectification)</h2>
-            <p>가정용 전기는 <strong>교류(AC)</strong>인데, 전자제품은 <strong>직류(DC)</strong>가 필요하죠.</p>
-            <div class="circuit-symbol">
-                <span>🌊(AC) ➡️ <strong>[다이오드]</strong> ➡️ ➖(DC)</span>
+            <div style="display:flex; align-items:center; gap:30px; font-size:1.5rem; background:#f1f5f9; padding:40px; border-radius:20px;">
+                <span>🌊 교류(AC)</span>
+                <span>➡️ <strong>[ 다이오드 ]</strong> ➡️</span>
+                <span>➖ 직류(DC)</span>
             </div>
-            <p>다이오드는 물결치는 교류를 한쪽 방향으로만 흐르게 하여 직류로 바꿔줍니다.</p>
-            <p>이것이 바로 스마트폰 충전기의 원리!</p>
-            <button class="btn" onclick="nextSlide()">퀴즈 풀러 가기 🎯</button>
+            <p style="margin-top:30px;">가정용 콘센트 전기를 전자제품이 쓸 수 있게 바꿔줍니다.<br>스마트폰 충전기(어댑터)가 바로 이 역할을 합니다.</p>
+            <button class="btn" onclick="nextSlide()">퀴즈 풀기 🎯</button>
         </div>
 
-        <!-- Slide 9: Quiz 1 -->
-        <div class="slide" id="quiz1">
-            <h2>🧩 퀴즈 1: 다이오드 마스터</h2>
-            <p>다이오드에 전류가 흐르기 위한 조건(순방향)으로 올바른 연결은?</p>
-            <div class="quiz-options">
-                <button class="btn quiz-btn" onclick="checkAnswer(this, false, '오답입니다! P형은 +, N형은 -와 만나야 해요.')">애노드(-) -- 캐소드(+)</button>
-                <button class="btn quiz-btn" onclick="checkAnswer(this, true, '정답! P형(+)과 플러스, N형(-)과 마이너스가 만나야 전류가 흐릅니다.')">애노드(+) -- 캐소드(-)</button>
-                <button class="btn quiz-btn" onclick="checkAnswer(this, false, '오답입니다. 전압의 극성이 중요해요!')">전압 극성에 상관없이 흐른다</button>
+        <!-- 8. 퀴즈 1 (Split View) -->
+        <div class="slide split-view" id="quiz1">
+            <div class="content-left">
+                <h2>🧩 퀴즈 1: 다이오드 마스터</h2>
+                <p>다이오드에 전류가 흐르기 위한 조건(순방향 바이어스)으로<br>올바른 연결 방법은 무엇인가요?</p>
+                <p id="feedback1" style="font-weight:bold; font-size:1.2rem; min-height: 50px;"></p>
+                <button class="btn" id="nextBtn1" style="display:none;" onclick="nextSlide()">다음 단계로 ⏩</button>
             </div>
-            <p id="feedback1" style="margin-top:20px; font-weight:bold;"></p>
-            <button class="btn" id="nextBtn1" style="display:none;" onclick="nextSlide()">다음 단계로 ⏩</button>
+            <div class="content-right" style="background:transparent; justify-content:center;">
+                <div class="quiz-container">
+                    <button class="quiz-btn" onclick="checkAnswer(this, false, '땡! P형은 플러스와 만나야 해요.', 'feedback1', 'nextBtn1')">
+                        P형(-) -- N형(+)
+                    </button>
+                    <button class="quiz-btn" onclick="checkAnswer(this, true, '정답! P형(+)과 N형(-)끼리 만나야 해요.', 'feedback1', 'nextBtn1')">
+                        P형(+) -- N형(-)
+                    </button>
+                    <button class="quiz-btn" onclick="checkAnswer(this, false, '전압 극성이 반대면 전류가 흐르지 않아요.', 'feedback1', 'nextBtn1')">
+                        전압 극성 상관 없음
+                    </button>
+                    <button class="quiz-btn" onclick="checkAnswer(this, false, '교류를 그대로 연결하면 깜빡거려요.', 'feedback1', 'nextBtn1')">
+                        교류 전원 직접 연결
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <!-- Slide 10: Various Diodes -->
-        <div class="slide">
-            <h2>다이오드의 종류</h2>
-            <p>다이오드 삼형제를 소개합니다!</p>
-            <div style="text-align:left; width:100%;">
+        <!-- 9. 트랜지스터 도입 (Split View) -->
+        <div class="slide split-view">
+            <div class="content-left">
+                <h2>02. 트랜지스터 (BJT)</h2>
+                <p>전자회로의 꽃이라 불리는 소자입니다.</p>
+                <p class="highlight" style="display:inline-block;">"작은 신호로 큰 신호를 제어한다"</p>
+                <p>수도꼭지 손잡이를 살짝만 돌려도(작은 힘)<br>콸콸 쏟아지는 물(큰 물줄기)을 조절할 수 있는 원리입니다.</p>
+                <button class="btn" onclick="nextSlide()">구조 살펴보기 🔍</button>
+            </div>
+            <div class="content-right">
+                <div class="diagram-container">💧🔧🌊</div>
+                <p>수도꼭지 원리와 같아요!</p>
+            </div>
+        </div>
+
+        <!-- 10. 트랜지스터 단자 (Split View) -->
+        <div class="slide split-view">
+            <div class="content-left">
+                <h2>트랜지스터의 3총사 (E, B, C)</h2>
                 <div class="box">
-                    <strong>1. 발광 다이오드 (LED) 💡</strong><br>
-                    전류가 흐르면 빛을 냄. (신호등, 전광판)
+                    <p>🦶 <strong>이미터 (Emitter, E):</strong><br>전자를 방출하는 곳 (수도꼭지 입구)</p>
+                    <p>🖐️ <strong>베이스 (Base, B):</strong><br>흐름을 제어하는 곳 (수도꼭지 손잡이)</p>
+                    <p>🧺 <strong>컬렉터 (Collector, C):</strong><br>전자를 모으는 곳 (물이 나오는 출구)</p>
+                </div>
+                <button class="btn btn-experiment" onclick="nextSlide()">🧪 동작 체험하러 가기!</button>
+            </div>
+            <div class="content-right">
+                <div style="border: 4px solid #333; border-radius:50%; width:200px; height:200px; position:relative; display:flex; align-items:center; justify-content:center;">
+                    <!-- 트랜지스터 기호 간략화 -->
+                    <div style="font-size:2rem; font-weight:bold;">NPN</div>
+                    <div style="position:absolute; left:-20px;">B</div>
+                    <div style="position:absolute; top:-20px;">C</div>
+                    <div style="position:absolute; bottom:-20px;">E ↘</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11. 트랜지스터 시뮬레이션 (Split View - Interactive) -->
+        <div class="slide split-view">
+            <div class="content-left">
+                <h2>🧪 체험: 트랜지스터 수도꼭지</h2>
+                <p><strong>베이스 전류($I_B$)</strong> 슬라이더를 움직여보세요.<br>아주 작은 베이스 전류로 전구($I_C$)를 얼마나 밝게 할 수 있을까요?</p>
+                <p id="sim-tr-msg" style="margin-top:20px; font-weight:bold; color:var(--primary-color);">현재 상태: 차단 (OFF)</p>
+            </div>
+            <div class="content-right" style="background:#fff; border: 2px solid #e2e8f0;">
+                <div id="sim-tr-bulb" class="bulb"></div>
+                <p>전구 밝기 (컬렉터 전류 $I_C$)</p>
+                
+                <div style="width:80%; margin-top:30px;">
+                    <label style="font-weight:bold;">🖐️ 베이스 전류 조절 ($I_B$)</label>
+                    <input type="range" id="baseCurrent" min="0" max="100" value="0" oninput="updateTransistorSim(this.value)">
+                    <div style="display:flex; justify-content:space-between; font-size:0.9rem; color:#64748b;">
+                        <span>0 (잠김)</span>
+                        <span>Max (열림)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12. 기능 정리 (Split View) -->
+        <div class="slide split-view">
+            <div class="content-left">
+                <h2>트랜지스터의 2가지 핵심 기능</h2>
+                <div class="box">
+                    <h3>1️⃣ 스위칭 작용 (Switching)</h3>
+                    <p>전류를 흐르게 하거나(ON), 끊는(OFF) 역할.<br>디지털 회로(0과 1)의 기초입니다.</p>
                 </div>
                 <div class="box">
-                    <strong>2. 제너 다이오드 ⚡</strong><br>
-                    역방향에서도 일정 전압을 유지. (전압 안정화)
+                    <h3>2️⃣ 증폭 작용 (Amplification)</h3>
+                    <p>입력된 작은 신호를 큰 신호로 키워주는 역할.<br>마이크 소리를 스피커로 크게 듣는 원리!</p>
                 </div>
-                <div class="box">
-                    <strong>3. 포토 다이오드 ☀️</strong><br>
-                    빛을 받으면 전류가 흐름. (리모컨 센서)
-                </div>
+                <button class="btn" onclick="nextSlide()">최종 퀴즈 도전! 🏆</button>
             </div>
-            <button class="btn" onclick="nextSlide()">트랜지스터로 이동! 🚀</button>
-        </div>
-
-        <!-- Slide 11: Transistor Intro -->
-        <div class="slide">
-            <h2>02. 바이폴라 접합 트랜지스터 (BJT)</h2>
-            <p>전자회로의 꽃! 트랜지스터입니다.</p>
-            <div class="diagram">💧 🔧 🌊</div>
-            <p><strong>"작은 신호로 큰 신호를 제어한다"</strong></p>
-            <p>수도꼭지(작은 힘)를 돌려 콸콸 쏟아지는 물(큰 물줄기)을 조절하는 것과 같습니다.</p>
-            <button class="btn" onclick="nextSlide()">구조 살펴보기 🔍</button>
-        </div>
-
-        <!-- Slide 12: BJT Structure -->
-        <div class="slide">
-            <h2>트랜지스터의 구조 (NPN / PNP)</h2>
-            <p>다이오드(PN)를 하나 더 붙인 구조입니다. 샌드위치 같죠?</p>
-            <div style="display:flex; justify-content:center; gap:20px;">
-                <div style="border:2px solid #333; padding:10px;">
-                    <strong>NPN형</strong><br>
-                    <span style="color:blue">N</span> - <span style="color:red">P</span> - <span style="color:blue">N</span>
-                </div>
-                <div style="border:2px solid #333; padding:10px;">
-                    <strong>PNP형</strong><br>
-                    <span style="color:red">P</span> - <span style="color:blue">N</span> - <span style="color:red">P</span>
-                </div>
+            <div class="content-right">
+                <div style="font-size:4rem; margin-bottom:20px;">🎤 ➡️ 🔊</div>
+                <p>증폭의 마법</p>
+                <div style="font-size:4rem; margin-top:40px;">💡 🔘</div>
+                <p>스위칭의 마법</p>
             </div>
-            <p>대부분의 회로에서는 <strong>NPN형</strong>을 더 많이 사용합니다.</p>
-            <button class="btn" onclick="nextSlide()">3개의 단자 알아보기 👉</button>
         </div>
 
-        <!-- Slide 13: BJT Terminals -->
-        <div class="slide">
-            <h2>트랜지스터의 3총사 (E, B, C)</h2>
-            <p>트랜지스터는 다리가 3개입니다.</p>
-            <div class="box" style="text-align:left;">
-                <p>🦶 <strong>이미터 (Emitter, E):</strong> 전자를 방출하는 곳 (수도꼭지 입구)</p>
-                <p>🖐️ <strong>베이스 (Base, B):</strong> 흐름을 제어하는 곳 (수도꼭지 손잡이)</p>
-                <p>🧺 <strong>컬렉터 (Collector, C):</strong> 전자를 모으는 곳 (물이 나오는 출구)</p>
+        <!-- 13. 최종 퀴즈 (Split View) -->
+        <div class="slide split-view" id="quiz3">
+            <div class="content-left">
+                <h2>🧩 최종 퀴즈</h2>
+                <p>트랜지스터의 동작 영역 중,<br><strong>'증폭 작용'</strong>을 위해 사용하는 영역은 어디일까요?</p>
+                <p id="feedback3" style="font-weight:bold; font-size:1.2rem; min-height: 50px;"></p>
+                <button class="btn" id="nextBtn3" style="display:none;" onclick="nextSlide()">결과 확인 🎉</button>
             </div>
-            <p>이미터(E)에 있는 화살표가 전류의 방향을 알려줍니다!</p>
-            <button class="btn" onclick="nextSlide()">퀴즈 도전! 🎯</button>
-        </div>
-
-        <!-- Slide 14: Quiz 2 -->
-        <div class="slide" id="quiz2">
-            <h2>🧩 퀴즈 2: 트랜지스터 구조</h2>
-            <p>트랜지스터의 3개 단자가 <strong>아닌</strong> 것은?</p>
-            <div class="quiz-options">
-                <button class="btn quiz-btn" onclick="checkAnswer(this, false, '이미터(Emitter)는 방출하는 단자입니다.')">이미터 (Emitter)</button>
-                <button class="btn quiz-btn" onclick="checkAnswer(this, true, '정답! 게이트는 FET라는 다른 트랜지스터의 단자입니다.')">게이트 (Gate)</button>
-                <button class="btn quiz-btn" onclick="checkAnswer(this, false, '컬렉터(Collector)는 모으는 단자입니다.')">컬렉터 (Collector)</button>
-                <button class="btn quiz-btn" onclick="checkAnswer(this, false, '베이스(Base)는 제어하는 단자입니다.')">베이스 (Base)</button>
-            </div>
-            <p id="feedback2" style="margin-top:20px; font-weight:bold;"></p>
-            <button class="btn" id="nextBtn2" style="display:none;" onclick="nextSlide()">다음 단계로 ⏩</button>
-        </div>
-
-        <!-- Slide 15: NPN Operation -->
-        <div class="slide">
-            <h2>NPN 트랜지스터 동작 원리</h2>
-            <p>트랜지스터가 작동하려면 조건이 필요해요.</p>
-            <div class="box">
-                <p>1️⃣ <strong>베이스-이미터(BE)</strong>: 순방향 바이어스 (문 열림)</p>
-                <p>2️⃣ <strong>베이스-컬렉터(BC)</strong>: 역방향 바이어스 (당겨줌)</p>
-            </div>
-            <p>이렇게 하면 베이스에 <strong>약간의 전류(IB)</strong>만 흘려줘도<br>컬렉터에서 이미터로 <strong>큰 전류(IC)</strong>가 흐릅니다!</p>
-            <button class="btn" onclick="nextSlide()">야구로 비유하면? ⚾</button>
-        </div>
-
-        <!-- Slide 16: Analogy -->
-        <div class="slide">
-            <h2>⚾ 야구로 이해하는 트랜지스터</h2>
-            <p>교과서 그림 Ⅱ-5를 기억하나요?</p>
-            <div class="diagram">⛹️‍♂️(투수) ⚾ 🧤(포수)</div>
-            <ul style="text-align:left; display:inline-block;">
-                <li><strong>투수 (이미터):</strong> 공(전자)을 던지는 사람</li>
-                <li><strong>포수 (컬렉터):</strong> 공을 받는 사람</li>
-                <li><strong>베이스:</strong> 투수가 공을 던지도록 신호를 주는 코치</li>
-            </ul>
-            <p>코치(베이스)가 신호를 주지 않으면 투수(이미터)는 공을 던지지 않아요.</p>
-            <button class="btn" onclick="nextSlide()">전류 관계식 📐</button>
-        </div>
-
-        <!-- Slide 17: Current Relation -->
-        <div class="slide">
-            <h2>전류의 마법 공식</h2>
-            <p>이미터에서 나가는 전류($I_E$)는 어디로 갈까요?</p>
-            <div class="box" style="font-size:1.2rem;">
-                $$I_E = I_B + I_C$$
-            </div>
-            <p><strong>중요한 사실!</strong><br>
-            베이스 전류($I_B$)는 아주아주 작아요 (약 1~2%).<br>
-            대부분의 전류(98~99%)는 컬렉터($I_C$)로 흐릅니다.</p>
-            <p class="highlight">즉, $I_C \approx I_E$ (거의 비슷하다)</p>
-            <button class="btn" onclick="nextSlide()">트랜지스터의 2가지 얼굴 🎭</button>
-        </div>
-
-        <!-- Slide 18: Function 1 - Switch -->
-        <div class="slide">
-            <h2>기능 1: 스위칭 작용 (Switching)</h2>
-            <p>트랜지스터는 엄청나게 빠른 <strong>전자 스위치</strong>입니다.</p>
-            <div style="display:flex; justify-content:space-around; width:100%;">
-                <div class="box" style="width:45%;">
-                    <strong>OFF (차단 영역)</strong><br>
-                    베이스 전류 = 0<br>
-                    수도꼭지 잠금 🔒
-                </div>
-                <div class="box" style="width:45%;">
-                    <strong>ON (포화 영역)</strong><br>
-                    베이스 전류 충분함<br>
-                    수도꼭지 활짝 🚰
+            <div class="content-right" style="background:transparent; justify-content:center;">
+                <div class="quiz-container" style="grid-template-columns: 1fr;">
+                    <button class="quiz-btn" onclick="checkAnswer(this, false, '차단 영역은 스위치가 꺼진(OFF) 상태입니다.', 'feedback3', 'nextBtn3')">
+                        차단 영역 (Cut-off)
+                    </button>
+                    <button class="quiz-btn" onclick="checkAnswer(this, false, '포화 영역은 스위치가 완전히 켜진(ON) 상태입니다.', 'feedback3', 'nextBtn3')">
+                        포화 영역 (Saturation)
+                    </button>
+                    <button class="quiz-btn" onclick="checkAnswer(this, true, '정답! 활성 영역에서 입력 신호에 비례해 증폭합니다.', 'feedback3', 'nextBtn3')">
+                        활성 영역 (Active)
+                    </button>
                 </div>
             </div>
-            <p>디지털 회로(0과 1)의 기본이 됩니다!</p>
-            <button class="btn" onclick="nextSlide()">다음 기능 👉</button>
         </div>
 
-        <!-- Slide 19: Function 2 - Amplifier -->
-        <div class="slide">
-            <h2>기능 2: 증폭 작용 (Amplification)</h2>
-            <div class="diagram">🎤 ➡️ 🔊</div>
-            <p>마이크의 작은 소리 신호를 스피커의 큰 소리로 키워줍니다.</p>
-            <p><strong>입력(베이스)</strong>의 미세한 변화가<br>
-            <strong>출력(컬렉터)</strong>의 거대한 변화를 만들어냅니다.</p>
-            <p>이것이 우리가 음악을 크게 들을 수 있는 이유입니다.</p>
-            <button class="btn" onclick="nextSlide()">마지막 퀴즈 도전! 🏆</button>
-        </div>
-
-        <!-- Slide 20: Final Quiz -->
-        <div class="slide" id="quiz3">
-            <h2>🧩 최종 퀴즈</h2>
-            <p>트랜지스터의 동작 영역 중, <strong>증폭 작용</strong>을 위해 사용하는 영역은?</p>
-            <div class="quiz-options">
-                <button class="btn quiz-btn" onclick="checkAnswer(this, false, '차단 영역은 스위치 OFF 상태입니다.')">차단 영역 (Cut-off)</button>
-                <button class="btn quiz-btn" onclick="checkAnswer(this, false, '포화 영역은 스위치 ON 상태입니다.')">포화 영역 (Saturation)</button>
-                <button class="btn quiz-btn" onclick="checkAnswer(this, true, '정답! 활성 영역에서 입력 신호를 증폭합니다.')">활성 영역 (Active)</button>
-            </div>
-            <p id="feedback3" style="margin-top:20px; font-weight:bold;"></p>
-            <button class="btn" id="nextBtn3" style="display:none;" onclick="nextSlide()">결과 확인 🎉</button>
-        </div>
-
-        <!-- Slide 21: Student Reflection -->
-        <div class="slide">
-            <h2>🤔 오늘의 학습 정리</h2>
-            <p>오늘 배운 내용을 한 문장으로 정리해볼까요?</p>
-            <textarea placeholder="예) 다이오드는 일방통행, 트랜지스터는 수도꼭지다." style="width:100%; height:100px; padding:10px; border-radius:10px; border:1px solid #ccc; font-family:inherit;"></textarea>
-            <p style="font-size:0.9rem; color:#666;">* 작성한 내용은 저장되지 않지만, 스스로 정리하는 데 도움이 됩니다.</p>
-            <button class="btn" onclick="nextSlide()">마무리 👋</button>
-        </div>
-
-        <!-- Slide 22: Conclusion -->
+        <!-- 14. 마무리 (Center) -->
         <div class="slide">
             <h2>수고하셨습니다! 👏</h2>
-            <div class="diagram">🎓</div>
-            <p>이제 여러분은 <strong>다이오드</strong>와 <strong>트랜지스터</strong>의<br>기본 원리를 마스터했습니다.</p>
-            <p>전기 자동차뿐만 아니라, 컴퓨터, 스마트폰도<br>모두 이 작은 소자들 덕분에 움직인답니다.</p>
-            <div class="box" style="background-color: #e0f2fe;">
-                <strong>다음 시간 예고</strong><br>
-                트랜지스터를 이용한 증폭 회로 설계 실습!
+            <div class="diagram-container">🎓</div>
+            <p>다이오드와 트랜지스터, 이제 어렵지 않죠?</p>
+            <div class="box" style="text-align:left; max-width:800px;">
+                <p><strong>📚 사용된 자료 출처</strong></p>
+                <ul>
+                    <li>유튜브 영상: <a href="https://youtu.be/sN_1Qd5_aMc" target="_blank">안될과학 - 반도체 원리</a></li>
+                    <li>이미지: Unsplash (Electric Car)</li>
+                    <li>내용: 2015 개정 교육과정 '전자회로' 교과서</li>
+                </ul>
             </div>
-            <button class="btn btn-secondary" onclick="location.reload()">처음부터 다시 보기 🔄</button>
+            <div style="margin-top:20px;">
+                <button class="btn btn-secondary" onclick="location.reload()">처음부터 다시 보기 🔄</button>
+            </div>
         </div>
 
     </main>
 
     <footer>
-        <button class="btn btn-secondary" onclick="prevSlide()">⬅️ 이전</button>
-        <span id="page-indicator" style="align-self:center; color:#6b7280;">1 / 22</span>
-        <button class="btn" onclick="nextSlide()">다음 ➡️</button>
+        <button class="btn btn-secondary" onclick="prevSlide()" style="font-size:1rem; padding:10px 20px;">⬅️ 이전</button>
+        <span id="page-indicator" style="font-weight:bold; color:#64748b;">1 / 14</span>
+        <button class="btn" onclick="nextSlide()" style="font-size:1rem; padding:10px 20px;">다음 ➡️</button>
     </footer>
 
     <script>
@@ -486,15 +548,10 @@
                 }
             });
 
-            // Progress Bar 업데이트
+            // Progress Bar & Page Indicator
             const progress = ((currentSlide + 1) / slides.length) * 100;
             progressBar.style.width = `${progress}%`;
-            
-            // 페이지 번호 업데이트
             pageIndicator.innerText = `${currentSlide + 1} / ${slides.length}`;
-
-            // 스크롤 맨 위로
-            window.scrollTo(0, 0);
         }
 
         function nextSlide() {
@@ -511,32 +568,72 @@
             }
         }
 
-        function checkAnswer(btn, isCorrect, message) {
+        // 통합 퀴즈 함수
+        function checkAnswer(btn, isCorrect, message, feedbackId, nextBtnId) {
+            const feedback = document.getElementById(feedbackId);
+            const nextBtn = document.getElementById(nextBtnId);
             const parent = btn.parentElement;
-            const feedback = parent.nextElementSibling; // p#feedback
-            const nextBtn = feedback.nextElementSibling; // button#nextBtn
-
-            // 기존 스타일 초기화
+            
+            // 모든 버튼 비활성화 및 스타일 초기화
             const buttons = parent.querySelectorAll('.quiz-btn');
-            buttons.forEach(b => {
-                b.classList.remove('correct', 'wrong');
-                b.disabled = true; // 중복 클릭 방지
-            });
-
+            
             if (isCorrect) {
                 btn.classList.add('correct');
                 feedback.style.color = 'var(--secondary-color)';
                 feedback.innerText = message;
                 nextBtn.style.display = 'inline-block';
+                buttons.forEach(b => b.disabled = true); // 정답 맞추면 더 이상 클릭 불가
             } else {
                 btn.classList.add('wrong');
                 feedback.style.color = '#ef4444';
                 feedback.innerText = message;
-                
-                // 틀리면 다시 시도할 기회 제공 (버튼 활성화)
-                setTimeout(() => {
-                    buttons.forEach(b => b.disabled = false);
-                }, 1000);
+                btn.disabled = true; // 틀린 버튼만 비활성화
+            }
+        }
+
+        // 다이오드 시뮬레이션
+        function setDiodeBias(type) {
+            const bulb = document.getElementById('sim-bulb');
+            const msg = document.getElementById('sim-diode-msg');
+
+            if (type === 'forward') {
+                bulb.classList.add('on');
+                msg.innerText = "💡 순방향 연결 성공! 전류가 흐릅니다.";
+                msg.style.color = "var(--secondary-color)";
+            } else {
+                bulb.classList.remove('on');
+                msg.innerText = "🚫 역방향 연결! 전류가 차단됩니다.";
+                msg.style.color = "#ef4444";
+            }
+        }
+
+        // 트랜지스터 시뮬레이션
+        function updateTransistorSim(val) {
+            const bulb = document.getElementById('sim-tr-bulb');
+            const msg = document.getElementById('sim-tr-msg');
+            
+            // 밝기 계산 (opacity + shadow)
+            const brightness = val / 100;
+            bulb.style.backgroundColor = `rgba(250, 204, 21, ${0.2 + (brightness * 0.8)})`;
+            
+            if (val > 0) {
+                bulb.style.boxShadow = `0 0 ${val/1.5}px rgba(250, 204, 21, 1)`;
+                bulb.style.borderColor = `rgba(234, 179, 8, ${0.2 + brightness})`;
+            } else {
+                bulb.style.boxShadow = 'none';
+                bulb.style.borderColor = '#94a3b8';
+            }
+
+            // 메시지
+            if (val == 0) {
+                msg.innerText = "🔒 차단 영역 (Cut-off)";
+                msg.style.color = "#64748b";
+            } else if (val < 90) {
+                msg.innerText = `📈 활성 영역 (Active): 증폭 중... ${val}%`;
+                msg.style.color = "var(--primary-color)";
+            } else {
+                msg.innerText = "⚡ 포화 영역 (Saturation): 최대 개방!";
+                msg.style.color = "var(--accent-color)";
             }
         }
 
