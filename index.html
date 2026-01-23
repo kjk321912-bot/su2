@@ -232,19 +232,40 @@
         .quiz-btn.correct { background-color: #d4edda; border-color: #28a745; color: #155724; }
         .quiz-btn.wrong { background-color: #f8d7da; border-color: #dc3545; color: #721c24; }
 
-        /* 기타 */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
+        /* 링크 박스 스타일 (NEW) */
+        .link-box {
+            background-color: #fff;
+            border: 2px solid #eee;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
             width: 100%;
-            background: #000;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         
+        .youtube-btn {
+            background-color: #ff0000;
+            color: white;
+            text-decoration: none;
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .youtube-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
         .think-bubble {
             background-color: #fff3cd;
             border: 2px solid #ffeeba;
@@ -256,39 +277,40 @@
             font-size: 1.2rem;
         }
         
-        /* [수정됨] 증폭 그래프 바 스타일 */
+        /* 증폭 그래프 바 스타일 */
         .bar-chart-container {
             display: flex;
             justify-content: center;
-            /* align-items 제거 후 자식 요소(bar-group)에서 정렬 */
-            height: 200px; /* 전체 높이 확보 */
+            height: 200px; 
             gap: 40px;
             margin-bottom: 25px;
             width: 100%;
-            background-color: white; /* 배경 흰색 */
+            background-color: white;
             border-radius: 10px;
-            padding-top: 20px; /* 위쪽 여백 */
+            padding-top: 20px;
+            align-items: flex-end; 
         }
         .bar-group {
             display: flex;
             flex-direction: column;
-            justify-content: flex-end; /* 아래쪽 정렬 */
+            justify-content: flex-end;
             align-items: center;
             width: 80px;
-            height: 100%; /* 부모 높이 꽉 채우기 (중요) */
+            height: 100%; 
         }
         .bar {
             width: 100%;
-            min-height: 4px; /* 최소 높이 설정 */
             background-color: var(--primary-color);
-            transition: height 0.1s linear; /* 부드러운 움직임 */
+            transition: height 0.1s linear; 
             border-radius: 8px 8px 0 0;
+            min-height: 5px;
         }
         .bar-label {
             margin-top: 10px;
             font-weight: bold;
             font-size: 1.1rem;
-            height: 20px; /* 레이블 높이 고정 */
+            height: 30px;
+            text-align: center;
         }
 
     </style>
@@ -317,25 +339,34 @@
             </div>
         </div>
 
-        <!-- Slide 2: Video (Split) -->
+        <!-- Slide 2: External Video Link (수정됨) -->
         <div class="slide">
             <div class="split-layout">
                 <div class="split-content">
-                    <h2>💡 생각 열기: 반도체의 힘</h2>
-                    <p>작은 반도체 소자가 없다면<br>우리의 스마트폰도, 인터넷도 멈춥니다.</p>
-                    <p class="box-text">
-                        영상을 보며 전자 소자가<br>세상을 어떻게 바꾸는지 확인해봅시다.
-                    </p>
+                    <h2>💡 생각 열기: 반도체의 세계</h2>
+                    <p>반도체가 없다면 우리가 쓰는 스마트폰도 없습니다.<br>영상을 통해 그 원리를 쉽게 알아볼까요?</p>
+                    <div class="box-text">
+                        <strong>[필수 시청]</strong><br>
+                        오른쪽 버튼을 눌러 유튜브 영상을 보고 돌아오세요.<br>
+                        (약 5분 소요, 삼성전자 반도체 공식 채널)
+                    </div>
                 </div>
                 <div class="split-visual">
-                    <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/2iBiHqgO5kU" title="반도체 영상" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="link-box">
+                        <div style="font-size: 4rem;">📺</div>
+                        <p style="margin:0; font-weight:bold; font-size:1.2rem;">헬로! 칩스: 반도체란 무엇일까?</p>
+                        <a href="https://www.youtube.com/watch?v=2iBiHqgO5kU" target="_blank" class="youtube-btn">
+                            ▶ 유튜브 영상 보러가기
+                        </a>
+                        <p style="font-size:0.9rem; color:#777; margin-top:10px;">
+                            시청을 마치면 탭을 닫고<br>돌아와서 [다음] 버튼을 눌러주세요.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 3: Questions (Split) -->
+        <!-- Slide 3: Questions -->
         <div class="slide">
             <div class="split-layout">
                 <div class="split-content">
@@ -617,7 +648,7 @@
             </div>
         </div>
 
-        <!-- Slide 17: Interactive Amp (수정됨: 그래프 보이도록 개선) -->
+        <!-- Slide 17: Interactive Amp -->
         <div class="slide">
             <div class="split-layout">
                 <div class="split-content">
@@ -633,7 +664,7 @@
                     <div class="sim-container">
                         <div class="bar-chart-container">
                             <div class="bar-group">
-                                <!-- 초기값 10% 정도 보이게 설정 -->
+                                <!-- 초기값 4% -->
                                 <div class="bar" id="bar-ib" style="height: 4%; background:#ffc107;"></div>
                                 <div class="bar-label">입력($I_B$)</div>
                             </div>
@@ -725,7 +756,7 @@
                 트랜지스터를 이용한 <strong>LED 깜빡이 회로 제작 실습</strong>
             </div>
             <p style="margin-top:30px; font-size:0.9rem; color:#888;">
-                📺 영상 출처: 삼성전자 반도체 이야기 (https://youtu.be/2iBiHqgO5kU)
+                📺 영상 출처: <a href="https://www.youtube.com/watch?v=2iBiHqgO5kU" target="_blank" style="color:#007bff;">삼성전자 반도체 공식 유튜브 (헬로! 칩스)</a>
             </p>
         </div>
 
@@ -830,15 +861,14 @@
         const barIb = document.getElementById('bar-ib');
         const barIc = document.getElementById('bar-ic');
         
-        // 입력은 작게(40%), 출력은 크게(100%) 반응하도록 설정
+        // 입력은 작게(40%), 출력은 크게(100%) 반응
         const heightIb = val * 0.4; 
         const heightIc = val * 1.0; 
 
-        // 최소 높이 확보를 위해 +2%
-        barIb.style.height = `${heightIb + 2}%`;
-        barIc.style.height = `${heightIc + 2}%`;
+        // 최소 높이 5% 추가하여 0일 때도 살짝 보이게
+        barIb.style.height = `${heightIb + 5}%`;
+        barIc.style.height = `${heightIc + 5}%`;
 
-        // 출력이 일정 수준 넘으면 색상 밝게
         if(val > 5) {
             barIc.style.backgroundColor = "#28a745";
             barIc.style.boxShadow = `0 0 ${val/3}px #28a745`;
