@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>전자회로: 다이오드와 트랜지스터 (태블릿용)</title>
+    <title>전자회로: 다이오드와 트랜지스터 (인터랙티브)</title>
     <!-- 폰트 로드 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -29,6 +29,7 @@
             justify-content: center;
             height: 100vh;
             overflow: hidden;
+            user-select: none; /* 텍스트 드래그 방지 */
         }
 
         /* 컨테이너 스타일 (태블릿 가로 모드) */
@@ -110,6 +111,16 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* 애니메이션: 오답 시 흔들림 */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        .shake { animation: shake 0.3s; }
 
         /* 텍스트 스타일 */
         h1 { font-weight: 900; color: var(--primary-color); margin-bottom: 15px; font-size: 2.8rem; }
@@ -209,9 +220,9 @@
         }
         .btn-prev { background-color: #e9ecef; color: #333; }
         .btn-next { background-color: var(--primary-color); color: #fff; }
-        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; background-color: #ccc; }
 
-        /* 퀴즈 */
+        /* 퀴즈 스타일 */
         .quiz-options {
             display: flex;
             flex-direction: column;
@@ -227,10 +238,25 @@
             font-size: 1.2rem;
             transition: all 0.2s;
             text-align: left;
+            position: relative;
         }
         .quiz-btn:hover { background-color: #f8f9fa; border-color: #aaa; }
         .quiz-btn.correct { background-color: #d4edda; border-color: #28a745; color: #155724; }
         .quiz-btn.wrong { background-color: #f8d7da; border-color: #dc3545; color: #721c24; }
+
+        /* 퀴즈 해설 박스 */
+        .explanation-box {
+            display: none; /* 기본 숨김 */
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            color: #0d47a1;
+            text-align: left;
+            animation: fadeIn 0.5s;
+        }
+        .explanation-box.show { display: block; }
 
         /* 링크 박스 스타일 */
         .link-box {
@@ -313,9 +339,40 @@
             text-align: center;
         }
 
+        /* 스타트 오버레이 (소리 재생 권한용) */
+        #start-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #start-btn {
+            padding: 20px 50px;
+            font-size: 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,123,255,0.3);
+            transition: transform 0.2s;
+        }
+        #start-btn:hover { transform: scale(1.05); }
+
     </style>
 </head>
 <body>
+
+<!-- 소리 재생을 위한 시작 오버레이 -->
+<div id="start-overlay">
+    <h1 style="font-size:3rem; margin-bottom:30px;">전자회로 수업 시작</h1>
+    <p style="font-size:1.5rem; margin-bottom:40px;">소리가 포함되어 있습니다. 아래 버튼을 눌러주세요.</p>
+    <button id="start-btn" onclick="startClass()">수업 입장하기 🚀</button>
+</div>
 
 <div class="container">
     <div class="progress-container">
@@ -335,11 +392,11 @@
             <br>
             <div class="box-text" style="text-align: center; max-width: 600px;">
                 태블릿을 <strong>가로로</strong> 놓고 편안하게 보세요.<br>
-                화면 속 버튼을 직접 누르며 체험하는 학생 주도 수업입니다.
+                퀴즈를 모두 맞혀야 다음으로 넘어갈 수 있습니다!
             </div>
         </div>
 
-        <!-- Slide 2: External Video Link (3분차이 반도체) -->
+        <!-- Slide 2: External Video Link -->
         <div class="slide">
             <div class="split-layout">
                 <div class="split-content">
@@ -355,7 +412,7 @@
                     <div class="link-box">
                         <div style="font-size: 4rem;">📺</div>
                         <p style="margin:0; font-weight:bold; font-size:1.2rem;">3분차이: 반도체란 무엇인가요?</p>
-                        <a href="https://www.youtube.com/watch?v=imQ2IaykAFM" target="_blank" class="youtube-btn">
+                        <a href="https://www.youtube.com/watch?v=imQ2IaykAFM" target="_blank" class="youtube-btn" onclick="clickSound()">
                             ▶ 유튜브 영상 보러가기
                         </a>
                         <p style="font-size:0.9rem; color:#777; margin-top:10px;">
@@ -507,18 +564,23 @@
             <p>수도꼭지를 아주 살짝만 틀면 물이 안 나오듯,<br><strong>최소 0.7V 이상의 전압(힘)</strong>을 가해줘야 전류가 흐르기 시작합니다.</p>
         </div>
 
-        <!-- Slide 10: Quiz 1 -->
-        <div class="slide">
+        <!-- Slide 10: Quiz 1 (LOCKED) -->
+        <div class="slide quiz-slide" data-passed="false">
             <div class="split-layout">
                 <div class="split-content">
-                    <h2>🧠 퀴즈 타임 (1/3)</h2>
-                    <p>다이오드에 전류가 흐르기 위한<br>올바른 연결 방법(순방향)은 무엇일까요?</p>
+                    <h2>🔒 퀴즈 타임 (1/3)</h2>
+                    <p>문제를 맞혀야 다음으로 넘어갑니다!</p>
+                    <p><strong>다이오드에 전류가 흐르기 위한<br>올바른 연결(순방향)은?</strong></p>
+                    <div id="feedback-1" class="explanation-box">
+                        <strong>🙆‍♂️ 정답입니다!</strong><br>
+                        순방향 바이어스는 애노드(P형)에 플러스(+), 캐소드(N형)에 마이너스(-)를 연결해야 전위 장벽이 낮아져 전류가 흐릅니다.
+                    </div>
                 </div>
                 <div class="split-visual">
                     <div class="quiz-options">
-                        <button class="quiz-btn" onclick="checkAnswer(this, false)">애노드(-), 캐소드(+)</button>
-                        <button class="quiz-btn" onclick="checkAnswer(this, true)">애노드(+), 캐소드(-)</button>
-                        <button class="quiz-btn" onclick="checkAnswer(this, false)">전압 극성은 상관없다</button>
+                        <button class="quiz-btn" onclick="checkAnswer(this, false, 'feedback-1')">애노드(-), 캐소드(+)</button>
+                        <button class="quiz-btn" onclick="checkAnswer(this, true, 'feedback-1')">애노드(+), 캐소드(-)</button>
+                        <button class="quiz-btn" onclick="checkAnswer(this, false, 'feedback-1')">전압 극성은 상관없다</button>
                     </div>
                 </div>
             </div>
@@ -564,18 +626,23 @@
             <p>가정용 콘센트(AC)를 스마트폰 배터리(DC) 충전에 쓸 수 있게 해주는 마법사입니다!</p>
         </div>
 
-        <!-- Slide 13: Quiz 2 -->
-        <div class="slide">
+        <!-- Slide 13: Quiz 2 (LOCKED) -->
+        <div class="slide quiz-slide" data-passed="false">
             <div class="split-layout">
                 <div class="split-content">
-                    <h2>🧠 퀴즈 타임 (2/3)</h2>
-                    <p>다음 중 교류를 직류로 변환하는 데<br>가장 주로 쓰이는 다이오드는?</p>
+                    <h2>🔒 퀴즈 타임 (2/3)</h2>
+                    <p>문제를 맞혀야 다음으로 넘어갑니다!</p>
+                    <p><strong>다음 중 '교류를 직류로 변환'하는 데<br>가장 주로 쓰이는 다이오드는?</strong></p>
+                    <div id="feedback-2" class="explanation-box">
+                        <strong>🙆‍♂️ 정답입니다!</strong><br>
+                        정류(Rectification) 다이오드는 전류를 한 방향으로만 흐르게 하여 교류(AC)를 직류(DC)로 바꿔주는 핵심 소자입니다.
+                    </div>
                 </div>
                 <div class="split-visual">
                     <div class="quiz-options">
-                        <button class="quiz-btn" onclick="checkAnswer(this, false)">LED</button>
-                        <button class="quiz-btn" onclick="checkAnswer(this, true)">정류 다이오드</button>
-                        <button class="quiz-btn" onclick="checkAnswer(this, false)">포토 다이오드</button>
+                        <button class="quiz-btn" onclick="checkAnswer(this, false, 'feedback-2')">LED (발광 다이오드)</button>
+                        <button class="quiz-btn" onclick="checkAnswer(this, true, 'feedback-2')">정류 다이오드</button>
+                        <button class="quiz-btn" onclick="checkAnswer(this, false, 'feedback-2')">포토 다이오드</button>
                     </div>
                 </div>
             </div>
@@ -699,18 +766,23 @@
             <p>트랜지스터가 수십억 개 모여 CPU가 되고, 0과 1을 계산합니다.</p>
         </div>
 
-        <!-- Slide 19: Quiz 3 -->
-        <div class="slide">
+        <!-- Slide 19: Quiz 3 (LOCKED) -->
+        <div class="slide quiz-slide" data-passed="false">
             <div class="split-layout">
                 <div class="split-content">
-                    <h2>🧠 퀴즈 타임 (3/3)</h2>
-                    <p>트랜지스터 단자 중 캐리어(전자)를<br>가장 많이 방출하는 '투수' 역할은?</p>
+                    <h2>🔒 퀴즈 타임 (3/3)</h2>
+                    <p>문제를 맞혀야 다음으로 넘어갑니다!</p>
+                    <p><strong>트랜지스터 단자 중 캐리어(전자)를<br>가장 많이 방출하는 '투수' 역할은?</strong></p>
+                    <div id="feedback-3" class="explanation-box">
+                        <strong>🙆‍♂️ 정답입니다!</strong><br>
+                        이미터(Emitter)는 '방출하다(Emit)'라는 뜻처럼 전자를 쏘아 보내는 투수 역할을 합니다. 이 전자가 베이스를 지나 컬렉터로 갑니다.
+                    </div>
                 </div>
                 <div class="split-visual">
                     <div class="quiz-options">
-                        <button class="quiz-btn" onclick="checkAnswer(this, false)">베이스 (Base)</button>
-                        <button class="quiz-btn" onclick="checkAnswer(this, false)">컬렉터 (Collector)</button>
-                        <button class="quiz-btn" onclick="checkAnswer(this, true)">이미터 (Emitter)</button>
+                        <button class="quiz-btn" onclick="checkAnswer(this, false, 'feedback-3')">베이스 (Base)</button>
+                        <button class="quiz-btn" onclick="checkAnswer(this, false, 'feedback-3')">컬렉터 (Collector)</button>
+                        <button class="quiz-btn" onclick="checkAnswer(this, true, 'feedback-3')">이미터 (Emitter)</button>
                     </div>
                 </div>
             </div>
@@ -771,6 +843,60 @@
 </div>
 
 <script>
+    // 오디오 컨텍스트 설정 (Web Audio API)
+    let audioCtx;
+    
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playTone(freq, type, duration) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    // 효과음 함수들
+    function correctSound() {
+        initAudio();
+        // 띠링~ (도-미-솔)
+        playTone(523.25, 'sine', 0.1); // C5
+        setTimeout(() => playTone(659.25, 'sine', 0.1), 100); // E5
+        setTimeout(() => playTone(783.99, 'sine', 0.3), 200); // G5
+    }
+
+    function wrongSound() {
+        initAudio();
+        // 띠~ (낮은 톱니파)
+        playTone(150, 'sawtooth', 0.3);
+    }
+
+    function clickSound() {
+        initAudio();
+        // 톡 (짧은 소리)
+        playTone(800, 'triangle', 0.05);
+    }
+
+    function startClass() {
+        initAudio();
+        document.getElementById('start-overlay').style.display = 'none';
+        clickSound();
+    }
+
+    // 슬라이드 로직
     let currentSlide = 0;
     const slides = document.querySelectorAll('.slide');
     const progressBar = document.getElementById('progressBar');
@@ -779,6 +905,7 @@
     const pageIndicator = document.getElementById('pageIndicator');
 
     function updateSlide() {
+        clickSound();
         slides.forEach((slide, index) => {
             slide.classList.remove('active');
             if (index === currentSlide) {
@@ -786,14 +913,29 @@
             }
         });
 
+        // 버튼 상태 업데이트
         prevBtn.disabled = currentSlide === 0;
         
-        if (currentSlide === slides.length - 1) {
-            nextBtn.textContent = "종료";
-            nextBtn.onclick = () => alert("수업을 마칩니다! 김진경 선생님께 제출해주세요.");
+        // 퀴즈 슬라이드 체크 (잠금 기능)
+        const currentSlideElem = slides[currentSlide];
+        if (currentSlideElem.classList.contains('quiz-slide')) {
+            const passed = currentSlideElem.getAttribute('data-passed') === 'true';
+            if (!passed) {
+                nextBtn.disabled = true;
+                nextBtn.innerHTML = "🔒 퀴즈를 풀어주세요";
+            } else {
+                nextBtn.disabled = false;
+                nextBtn.textContent = "다음";
+            }
         } else {
-            nextBtn.textContent = "다음";
-            nextBtn.onclick = nextSlide;
+            nextBtn.disabled = false;
+            if (currentSlide === slides.length - 1) {
+                nextBtn.textContent = "종료";
+                nextBtn.onclick = () => alert("수업을 마칩니다! 김진경 선생님께 제출해주세요.");
+            } else {
+                nextBtn.textContent = "다음";
+                nextBtn.onclick = nextSlide;
+            }
         }
 
         const progress = ((currentSlide + 1) / slides.length) * 100;
@@ -815,8 +957,49 @@
         }
     }
 
+    // 퀴즈 로직 (잠금 해제 및 피드백)
+    function checkAnswer(btn, isCorrect, feedbackId) {
+        const parent = btn.parentElement;
+        const buttons = parent.querySelectorAll('.quiz-btn');
+        const feedbackBox = document.getElementById(feedbackId);
+        const currentSlideElem = slides[currentSlide];
+
+        if (isCorrect) {
+            // 정답 처리
+            correctSound();
+            btn.classList.add('correct');
+            btn.innerHTML += " ✅ 정답!";
+            
+            // 다른 버튼 비활성화
+            buttons.forEach(b => b.disabled = true);
+            
+            // 해설 보여주기
+            feedbackBox.classList.add('show');
+            
+            // 락 해제
+            currentSlideElem.setAttribute('data-passed', 'true');
+            nextBtn.disabled = false;
+            nextBtn.textContent = "다음";
+            nextBtn.onclick = nextSlide; // 이벤트 핸들러 재연결
+
+        } else {
+            // 오답 처리
+            wrongSound();
+            btn.classList.add('wrong');
+            btn.classList.add('shake'); // 흔들림 애니메이션
+            btn.innerHTML += " ❌";
+            
+            setTimeout(() => {
+                btn.classList.remove('wrong');
+                btn.classList.remove('shake');
+                btn.innerHTML = btn.innerHTML.replace(" ❌", "");
+            }, 1000);
+        }
+    }
+
     // 다이오드 시뮬레이션
     function runDiodeSim(mode) {
+        clickSound();
         const bulb = document.getElementById('diode-bulb');
         const status = document.getElementById('diode-status');
         const explanation = document.getElementById('diode-explanation');
@@ -828,6 +1011,7 @@
             status.innerHTML = "<span style='color:green; font-weight:bold;'>전류 흐름 (ON)</span>";
             explanation.innerHTML = "<strong>✅ 순방향 바이어스 성공!</strong><br>다이오드 문이 열리고 전류가 흘러 불이 켜졌습니다.";
             explanation.style.borderLeftColor = "#28a745";
+            correctSound(); // 성공 효과음
         } else {
             bulb.style.opacity = '0.2';
             bulb.style.filter = 'grayscale(100%)';
@@ -835,6 +1019,7 @@
             status.innerHTML = "<span style='color:red; font-weight:bold;'>전류 차단 (OFF)</span>";
             explanation.innerHTML = "<strong>🚫 역방향 바이어스 차단!</strong><br>다이오드 문이 닫혀 전류가 흐르지 못합니다.";
             explanation.style.borderLeftColor = "#dc3545";
+            wrongSound(); // 실패 효과음
         }
     }
 
@@ -844,6 +1029,7 @@
         const inputText = document.getElementById('tr-switch-input');
 
         if (isOn) {
+            clickSound();
             bulb.style.opacity = '1';
             bulb.style.filter = 'grayscale(0%)';
             bulb.style.textShadow = '0 0 50px #ffc107'; 
@@ -861,11 +1047,9 @@
         const barIb = document.getElementById('bar-ib');
         const barIc = document.getElementById('bar-ic');
         
-        // 입력은 작게(40%), 출력은 크게(100%) 반응
         const heightIb = val * 0.4; 
         const heightIc = val * 1.0; 
 
-        // 최소 높이 5% 추가하여 0일 때도 살짝 보이게
         barIb.style.height = `${heightIb + 5}%`;
         barIc.style.height = `${heightIc + 5}%`;
 
@@ -878,27 +1062,7 @@
         }
     }
 
-    // 퀴즈 로직
-    function checkAnswer(btn, isCorrect) {
-        const parent = btn.parentElement;
-        const buttons = parent.querySelectorAll('.quiz-btn');
-        
-        if (isCorrect) {
-            btn.classList.add('correct');
-            btn.innerHTML += " ✅ 정답!";
-            buttons.forEach(b => b.disabled = true);
-            alert("정답입니다! 다음 내용으로 넘어가세요. 👉");
-            nextSlide(); 
-        } else {
-            btn.classList.add('wrong');
-            btn.innerHTML += " ❌ 땡!";
-            setTimeout(() => {
-                btn.classList.remove('wrong');
-                btn.innerHTML = btn.innerHTML.replace(" ❌ 땡!", "");
-            }, 1000);
-        }
-    }
-
+    // 초기화
     updateSlide();
 </script>
 
